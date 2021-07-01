@@ -24,8 +24,9 @@ Access          PUBLIC
 Parameter       NONE
 Methods         GET
 */
-booky.get("/",(req,res)=>{
-    return res.json({books:database.books});
+booky.get("/",async(req,res)=>{
+    const getAllBooks=await BookModel.find();
+    return res.json(getAllBooks);
 });
 /*
 Route           /is
@@ -34,10 +35,12 @@ Access          PUBLIC
 Parameter       isbn
 Methods         GET
 */
-booky.get("/is/:isbn",(req,res)=>{
-    const getSpecificBook = database.books.filter((book)=>book.ISBN === req.params.isbn);
+booky.get("/is/:isbn",async(req,res)=>{
+    const getSpecificBook = await BookModel.findOne({ISBN: req.params.isbn});
+    //const getSpecificBook = database.books.filter((book)=>book.ISBN === req.params.isbn);
 
-    if(getSpecificBook.length===0){
+
+    if(!getSpecificBook){
         return res.json({error:`No book found for the ISBN of ${req.params.isbn}`,});
     }
     return res.json({book : getSpecificBook});
@@ -45,18 +48,19 @@ booky.get("/is/:isbn",(req,res)=>{
 
 /*
 Route           /c
-Description     Get specific books based on Cayegory
+Description     Get specific books based on Category
 Access          PUBLIC
 Parameter       category
 Methods         GET
 */
-booky.get("/c/:category",(req,res)=>{
-    const getSpecificBook = database.books.filter((book) => book.category.includes(req.params.category));
+booky.get("/c/:category",async(req,res)=>{
+    const getSpecificBooks=await BookModel.findOne({category:req.params.category,});
+    //const getSpecificBook = database.books.filter((book) => book.category.includes(req.params.category));
 
-    if(getSpecificBook.length===0){
+    if(!getSpecificBooks){
         return res.json({error:`No book found of category of ${req.params.category}`,});
     }
-    return res.json({book : getSpecificBook});
+    return res.json({book : getSpecificBooks});
 });
 
 /*
@@ -67,8 +71,9 @@ Parameter       NONE
 Methods         GET
 */
 
-booky.get("/author",(req,res)=>{
-    return res.json({authors:database.author});
+booky.get("/author",async(req,res)=>{
+    const getAllAuthors=await AuthorModel.find();
+    return res.json({authors:getAllAuthors});
 });
 
 /*
@@ -99,11 +104,10 @@ Parameter       NONE
 Methods         POST
 */
 
-booky.post("/book/add",(req,res)=>{
+booky.post("/book/add",async(req,res)=>{
     const {newBook} = req.body;//doubt
-
-    database.books.push(newBook);
-    return res.json({books:database.books});
+    const addNewBook = BookModel.create(newBook);
+    return res.json({books:addNewBook,message:"book was added!!"});
 
 });
 
@@ -115,11 +119,11 @@ Parameter       NONE
 Methods         POST
 */
 
-booky.post("/author/add",(req,res)=>{
+booky.post("/author/add",async(req,res)=>{
     const {newAuthor} = req.body;//doubt
 
-    database.author.push(newAuthor);
-    return res.json({books:database.author});
+    AuthorModel.create(newAuthor);
+    return res.json({message:"author was added"});
 });
 
 /*
@@ -250,17 +254,7 @@ booky.delete("/publication/delete/book/:isbn/:pubId",(req,res)=>{
     });
     return res.json({books:database.books,publication:database.publication})
 });
-/*
-Route           /author/book
-Description     Get specific authors based on books
-Access          PUBLIC
-Parameter       isbn
-Methods         GET
-*/
-booky.get("/",async(req,res)=>{
-    const getAllBooks=await BookModel.find();
-    return res.json({books:getAllBooks});
-});
+
 booky.listen(3000,()=>console.log("Server is running!!"));
 
 //HTTP client -> helper who helps you to make http request
