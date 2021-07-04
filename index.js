@@ -175,7 +175,7 @@ booky.put("/book/update/author/:isbn",async(req,res)=>{
         new:true,
     });
 
-    const updatedAuthor =await BookModel.findOneAndUpdate({
+    const updatedAuthor =await AuthorModel.findOneAndUpdate({
         id :req.body.newAuthor,
     },
     {
@@ -232,7 +232,7 @@ Parameter       isbn
 Methods         DELETE
 */
 
-booky.delete("/book/delete/:isbn",(req,res)=>{
+booky.delete("/book/delete/:isbn",async(req,res)=>{
     const updatedBookDatabase = database.books.filter((book)=>book.ISBN!==req.params.isbn);
     database.books=updatedBookDatabase;
     return res.json({books:database.books});
