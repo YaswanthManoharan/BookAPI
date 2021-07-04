@@ -3,11 +3,11 @@ const mongoose = require("mongoose");
 const BookSchema = mongoose.Schema({
     ISBN: String,
       title: String,
-      pubDate: [Number],
+      pubDate: String,
       language: String,
       numPage: Number,
       author: [Number],
-      publications: Number,
+      publications: [Number],
       category: [String],
 });
 

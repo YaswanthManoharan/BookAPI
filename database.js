@@ -17,7 +17,11 @@ let books = [
       name: "Pavan",
       books: ["12345Book"],
     },
-    { id: 2, name: "Elon Musk", books: ["12345Book"] },
+    { 
+      id: 2, 
+      name: "Elon Musk", 
+      books: ["12345Book"], 
+    },
   ];
   
   const publication = [

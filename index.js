@@ -1,13 +1,14 @@
 require("dotenv").config();
-
+//Framework
 const express = require("express");
 const mongoose = require("mongoose");
+//database
 const database = require("./database/index");
 //Models
 const BookModel = require("./database/book");
 const AuthorModel = require("./database/author");
 const PublicationModel = require("./database/publication");
-//Initialisation
+//Initialisation of express
 const booky = express();
 //configuration
 booky.use(express.json());
@@ -38,7 +39,6 @@ Methods         GET
 booky.get("/is/:isbn",async(req,res)=>{
     const getSpecificBook = await BookModel.findOne({ISBN: req.params.isbn});
     //const getSpecificBook = database.books.filter((book)=>book.ISBN === req.params.isbn);
-
 
     if(!getSpecificBook){
         return res.json({error:`No book found for the ISBN of ${req.params.isbn}`,});
@@ -133,7 +133,7 @@ Access          PUBLIC
 Parameter       NONE
 Methods         PUT
 */
-/*booky.put("/book/update/title/:isbn",async(req,res)=>{
+booky.put("/book/update/title/:isbn",async(req,res)=>{
     const updatedBook =await BookModel.findOneAndUpdate({
         ISBN :req.params.isbn,
     },
@@ -142,17 +142,17 @@ Methods         PUT
     },
     {
         new:true,
-    }),
-    //foreach
-    //database.books.forEach((book)=>{
-    //    if(book.ISBN===req.params.isbn){
-     //       book.title=req.body.newBookTitle;
-     //       return;
-     //   }
-    //});
-    return res.json({message:"BookUpdated"});
+    });
+    /*foreach
+    database.books.forEach((book)=>{
+        if(book.ISBN===req.params.isbn){
+            book.title=req.body.newBookTitle;
+            return;
+        }
+    });*/
+    return res.json({message:updatedBook});
     //map (should not use)
-});*/
+});
 
 /*
 Route           /book/update/author
@@ -162,9 +162,32 @@ Parameter       NONE
 Methods         PUT
 */
 
-booky.put("/book/update/author/:isbn/:authorId",(req,res)=>{
+booky.put("/book/update/author/:isbn",async(req,res)=>{
+    const updatedBook = await BookModel.findOneAndUpdate({
+        ISBN:req.params.isbn,
+    },
+    {
+       $addToSet:{
+        author:req.body.newAuthor,
+       },
+    },
+    {
+        new:true,
+    });
+
+    const updatedAuthor =await BookModel.findOneAndUpdate({
+        id :req.body.newAuthor,
+    },
+    {
+        $addToSet:{
+            books:req.params.isbn,
+        },
+    },
+    {
+        new:true,
+    });
     //update book database
-    database.books.forEach((book)=>{
+    /*database.books.forEach((book)=>{
         if(book.ISBN===req.params.isbn){
             return book.author.push(parseInt(req.params.authorId));
         }
@@ -174,8 +197,8 @@ booky.put("/book/update/author/:isbn/:authorId",(req,res)=>{
         if(author.id===parseInt(req.params.authorId)){
             return author.books.push(req.params.isbn);
         }
-    });
-    return res.json({books:database.books,author:database.author});
+    });*/
+    return res.json({books:updatedBook,author:updatedAuthor,message:"New Author added!!"});
 });
 
 /*
