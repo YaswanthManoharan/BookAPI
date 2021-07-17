@@ -4,8 +4,20 @@ const Router=require("express").Router();
 //Database Models
 const PublicationModel = require("../../database/publication");
 
+/*
+Route           /publications
+Description     get all publications
+Access          PUBLIC
+Parameters      NONE
+Method          GET
+*/
 Router.get("/publications",(req,res)=>{
+    try{
     return res.json({publications:database.publication});
+    }
+    catch(error){
+        return res.json({ error: error.message });
+      }
 });
 /*
 Route           /publication/update/book
@@ -16,6 +28,7 @@ Methods         PUT
 */
 
 Router.put("/publication/update/book/:isbn",(req,res)=>{
+    try{
     //update the publication database
     database.publications.forEach((publication)=>{
         if(publication.id===req.body.pubId){
@@ -29,6 +42,10 @@ Router.put("/publication/update/book/:isbn",(req,res)=>{
         }
     });
     return res.json({books: database.books,publications:database.publications,message:"Successfully updated publications"})
+}
+catch(error){
+    return res.json({error:error.message});
+  }
 });
 /*
 Route           /publication/delete/book
@@ -38,6 +55,7 @@ Parameter       isbn,publication id
 Methods         DELETE
 */
 Router.delete("/publication/delete/book/:isbn/:pubId",(req,res)=>{
+    try{
     database.publications.forEach((publication)=>{
         if(publication.id===parseInt(req.params.pubId)){
             const newBooksList = publication.books.filter((book)=>book!==req.params.isbn);
@@ -45,13 +63,18 @@ Router.delete("/publication/delete/book/:isbn/:pubId",(req,res)=>{
             return;
         }
     });
+    //update book database
     database.books.forEach((book)=>{
         if(book.ISBN===req.params.isbn){
-            book.publication=0;
+            book.publication=0;//no publication available
             return;
         }
     });
     return res.json({books:database.books,publication:database.publication})
+}
+catch(error){
+    return res.json({ error: error.message });
+  }
 });
 
 module.exports = Router;

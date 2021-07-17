@@ -9,7 +9,7 @@ const PublicationSchema=mongoose.Schema({
     
 });
 
-//Author Model
+//Publication Model
 
 const PublicationModel = mongoose.model("publications",PublicationSchema);
 

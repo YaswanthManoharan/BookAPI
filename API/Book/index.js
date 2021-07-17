@@ -11,8 +11,13 @@ Parameter       NONE
 Methods         GET
 */
 Router.get("/",async(req,res)=>{
+    try{
     const getAllBooks=await BookModel.find();
     return res.json(getAllBooks);
+    }
+    catch(error){
+        return res.json({error: error.message});
+    }
 });
 /*
 Route           /is
@@ -22,6 +27,7 @@ Parameter       isbn
 Methods         GET
 */
 Router.get("/is/:isbn",async(req,res)=>{
+    try{
     const getSpecificBook = await BookModel.findOne({ISBN: req.params.isbn});
     //const getSpecificBook = database.books.filter((book)=>book.ISBN === req.params.isbn);
 
@@ -29,6 +35,10 @@ Router.get("/is/:isbn",async(req,res)=>{
         return res.json({error:`No book found for the ISBN of ${req.params.isbn}`,});
     }
     return res.json({book : getSpecificBook});
+}
+catch(error){
+    return res.json({error: error.message});
+}
 });
 
 /*
@@ -39,6 +49,7 @@ Parameter       category
 Methods         GET
 */
 Router.get("/c/:category",async(req,res)=>{
+    try{
     const getSpecificBooks=await BookModel.findOne({category:req.params.category,});
     //const getSpecificBook = database.books.filter((book) => book.category.includes(req.params.category));
 
@@ -46,6 +57,10 @@ Router.get("/c/:category",async(req,res)=>{
         return res.json({error:`No book found of category of ${req.params.category}`,});
     }
     return res.json({book : getSpecificBooks});
+}
+catch(error){
+    return res.json({error: error.message});
+}
 });
 /*
 Route           /book/add
@@ -73,6 +88,7 @@ Parameter       NONE
 Methods         PUT
 */
 Router.put("/update/title/:isbn",async(req,res)=>{
+    try{
     const updatedBook =await BookModel.findOneAndUpdate({
         ISBN :req.params.isbn,
     },
@@ -89,7 +105,11 @@ Router.put("/update/title/:isbn",async(req,res)=>{
             return;
         }
     });*/
-    return res.json({message:updatedBook});
+    return res.json({books:updatedBook});
+}
+catch(error){
+    return res.json({error: error.message});
+}
     //map (should not use)
 });
 
@@ -102,6 +122,7 @@ Methods         PUT
 */
 
 Router.put("/update/author/:isbn",async(req,res)=>{
+    try{
     const updatedBook = await BookModel.findOneAndUpdate({
         ISBN:req.params.isbn,
     },
@@ -113,7 +134,7 @@ Router.put("/update/author/:isbn",async(req,res)=>{
     {
         new:true,
     });
-
+    //updating author database
     const updatedAuthor =await AuthorModel.findOneAndUpdate({
         id :req.body.newAuthor,
     },
@@ -138,6 +159,10 @@ Router.put("/update/author/:isbn",async(req,res)=>{
         }
     });*/
     return res.json({books:updatedBook,author:updatedAuthor,message:"New Author added!!"});
+}
+catch(error){
+    return res.json({error: error.message});
+}
 });
 /*
 Route           /book/delete
@@ -148,12 +173,16 @@ Methods         DELETE
 */
 
 Router.delete("/delete/:isbn",async(req,res)=>{
+    try{
     const updatedBookDatabase = await BookModel.findOneAndDelete({
         ISBN:req.params.isbn,
     });
     /*const updatedBookDatabase = database.books.filter((book)=>book.ISBN!==req.params.isbn);
     database.books=updatedBookDatabase;*/
     return res.json({books:updatedBookDatabase});
+}catch(error){
+    return res.json({error: error.message});
+}
 });
 /*
 Route           /book/delete/author
@@ -163,6 +192,7 @@ Parameter       isbn
 Methods         DELETE
 */
 Router.delete("/delete/author/:isbn/:authorId",async(req,res)=>{
+    try{
     const updatedBook = await BookModel.findOneAndUpdate({
         ISBN: req.params.isbn,
     },
@@ -174,6 +204,7 @@ Router.delete("/delete/author/:isbn/:authorId",async(req,res)=>{
     {
         new:true,
     });
+    //updating the author database
     const updatedAuthor = await AuthorModel.findOneAndUpdate({
         id:parseInt(req.params.authorId),
     },
@@ -200,6 +231,9 @@ Router.delete("/delete/author/:isbn/:authorId",async(req,res)=>{
         }
     });*/
     return res.json({message:"author was deleted!!",book:updatedBook,author:updatedAuthor});
+}catch(error){
+    return res.json({error: error.message});
+}
 });
 
 module.exports=Router;

@@ -9,6 +9,16 @@ let books = [
       publications: [1],
       category: ["tech", "programming", "education", "thriller"],
     },
+    {
+      ISBN: "12345Two",
+      title: "Getting started with Python",
+      pubDate: "2021-07-07",
+      language: "en",
+      numOfPage: 225,
+      author: [1, 2],
+      category: ["fiction", "tech", "web dev"],
+      publications: [1],
+    },
   ];
   
   const author = [
@@ -17,7 +27,7 @@ let books = [
       name: "Pavan",
       books: ["12345Book"],
     },
-    { id: 2, name: "Elon Musk", books: ["12345Book"] },
+    { id: 2, name: "Elon Musk", books: ["12345Two"] },
   ];
   
   const publication = [
@@ -28,8 +38,8 @@ let books = [
     },
     {
       id: 2,
-      name: "hello",
-      books: [],
+      name: "Yash Publicaions",
+      books: ["12345Two"],
     },
   ];
   
